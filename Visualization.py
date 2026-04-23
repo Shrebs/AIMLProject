@@ -1,29 +1,40 @@
-def print_puzzle_state(self, state, step=0, g=0, h=0, f=0):
-    """Display puzzle state as 3x3 grid"""
-    print(f"\nStep {step} | g(n)={g} | h(n)={h} | f(n)={f}")
-    print("-" * 20)
-    for i in range(3):
-        row = state[i*3:(i+1)*3]
-        print("|", end=" ")
-        for tile in row:
-            if tile == 0:
-                print("_", end=" | ")
-            else:
-                print(tile, end=" | ")
-        print()
-    print("-" * 20)
+import tkinter as tk
 
-def display_solution(self, path):
-    """Display complete solution path"""
-    print("\n" + "="*40)
-    print("SOLUTION PATH")
-    print("="*40)
+class PuzzleGUI:
     
-    for step, node in enumerate(path):
-        self.print_puzzle_state(
-            node.state, 
-            step=step,
-            g=node.g,
-            h=node.h,
-            f=node.f
-        )
+    def __init__(self, root, path):
+        self.root = root
+        self.path = path
+        self.step = 0
+        
+        self.tiles = []
+        
+        for i in range(9):
+            tile = tk.Label(
+                root,
+                text="",
+                font=("Helvetica", 24, "bold"),
+                width=4,
+                height=2,
+                borderwidth=2,
+                relief="solid",
+                bg="#1e90ff",
+                fg="white"
+            )
+            tile.grid(row=i//3, column=i%3, padx=5, pady=5)
+            self.tiles.append(tile)
+        
+        self.update_board()
+    
+    def update_board(self):
+        state = self.path[self.step]
+        
+        for i, val in enumerate(state):
+            if val == 0:
+                self.tiles[i].config(text="", bg="black")
+            else:
+                self.tiles[i].config(text=str(val), bg="#1e90ff")
+        
+        if self.step < len(self.path)-1:
+            self.step += 1
+            self.root.after(600, self.update_board)
