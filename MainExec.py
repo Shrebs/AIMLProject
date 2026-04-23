@@ -1,25 +1,47 @@
+from PuzzleClass import EightPuzzle
+from Visualization import PuzzleGUI
+import tkinter as tk
+
+
+class Agent:
+    
+    def __init__(self, initial, goal):
+        self.env = EightPuzzle(initial, goal)
+    
+    def perceive(self):
+        print("[Agent] Observing environment...")
+    
+    def think(self):
+        print("[Agent] Solving using A* + Manhattan...")
+        return self.env.solve()
+    
+    def act(self, path):
+        print("[Agent] Executing solution...")
+        return path
+    
+    def run(self):
+        self.perceive()
+        path = self.think()
+        return self.act(path)
+
+
 def main():
-    # Define initial and goal states
-    initial_state = (0, 1, 2, 3, 4, 5, 6, 7, 8)
-    goal_state = (1, 2, 3, 4, 5, 6, 7, 8, 0)
+    initial = (2,8,3,1,6,4,7,0,5)
+    goal = (1,2,3,4,5,6,7,8,0)
     
-    # Create puzzle solver
-    puzzle = EightPuzzle(initial_state, goal_state)
+    agent = Agent(initial, goal)
+    path = agent.run()
     
-    # Solve using A*
-    import time
-    start_time = time.time()
-    solution = puzzle.solve_astar()
-    end_time = time.time()
+    if not path:
+        print("No solution found")
+        return
     
-    # Display results
-    if solution:
-        puzzle.display_solution(solution)
-        print(f"\n✓ Solution found in {len(solution) - 1} moves")
-        print(f"✓ Nodes expanded: {puzzle.nodes_expanded}")
-        print(f"✓ Time taken: {end_time - start_time:.4f} seconds")
-    else:
-        print("✗ No solution found!")
+    root = tk.Tk()
+    root.title("8 Puzzle AI Agent")
+    
+    gui = PuzzleGUI(root, path)
+    root.mainloop()
+
 
 if __name__ == "__main__":
     main()
